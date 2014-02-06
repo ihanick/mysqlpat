@@ -38,61 +38,13 @@ Plot::Plot( QWidget *parent ):
     canvas->setFrameStyle( QFrame::NoFrame );
     setCanvas( canvas );
 
-//    setAxisScale( QwtPlot::yLeft, 0.0, 10.0 );
-
-    // a title 
-    /*
-    QwtText title( "Picker Demo" );
-    title.setColor( Qt::white );
-    title.setRenderFlags( Qt::AlignHCenter | Qt::AlignTop );
-
-    QFont font;
-    font.setBold( true );
-    title.setFont( font );
-
-    QwtPlotTextLabel *titleItem = new QwtPlotTextLabel();
-    titleItem->setText( title );
-    titleItem->attach( this );
-    */
-
-
     enableAxis( QwtPlot::xBottom, false );
     enableAxis( QwtPlot::xTop, false );
     enableAxis( QwtPlot::yLeft, false );
     enableAxis( QwtPlot::yRight, false );
 
-
-/*
-#if 1
-    // section
-
-    //QColor c( "PaleVioletRed" );
-
-    QwtPlotZoneItem* zone = new QwtPlotZoneItem();
-    zone->setPen( Qt::darkGray );
-    zone->setBrush( QColor( "#834358" ) );
-    zone->setOrientation( Qt::Horizontal );
-    zone->setInterval( 3.8, 5.7 );
-    zone->attach( this );
-
-#else
-    // grid
-
-    QwtPlotGrid *grid = new QwtPlotGrid();
-    grid->setMajorPen( Qt::white, 0, Qt::DotLine );
-    grid->setMinorPen( Qt::gray, 0 , Qt::DotLine );
-    grid->attach( this );
-#endif
-*/
-
     // axes
-//    enableAxis( QwtPlot::yRight );
     setAxisTitle( QwtPlot::xBottom, "time" );
-
-    /*
-    setAxisTitle( QwtPlot::yLeft, "rpm" );
-    setAxisTitle( QwtPlot::yRight, "map" );
-    */
 
     CurveTracker* tracker = new CurveTracker( this->canvas() );
 
@@ -100,13 +52,6 @@ Plot::Plot( QWidget *parent ):
     // having to click on the canvas
     tracker->setStateMachine( new QwtPickerTrackerMachine() );
     tracker->setRubberBandPen( QPen( "MediumOrchid" ) );
-
-
-
-//    QwtPlotZoomer* zoomer = new QwtPlotZoomer( this->canvas() );
-//    zoomer->setMousePattern( QwtEventPattern::MouseSelect3, Qt::LeftButton, Qt::ControlModifier ); // zoom out to previous size
-//    zoomer->setMousePattern( QwtEventPattern::MouseSelect2, Qt::LeftButton, Qt::ControlModifier ); // // zoom out to full size
-//    zoomer->setMousePattern( QwtEventPattern::MouseSelect1, Qt::LeftButton);	// zoom selection
 
     panner = new QwtPlotPanner(this->canvas() );
     magnifier = new QwtPlotMagnifier(this->canvas() );
@@ -116,39 +61,14 @@ Plot::Plot( QWidget *parent ):
     panner->setAxisEnabled(QwtPlot::yRight, false);
 
     magnifier->setZoomInKey(Qt::Key_Equal);
-
-//    qDebug() << "Keys:" << magnifier->
-
 }
-
-class FunctionData: public QwtSyntheticPointData
-{
-public:
-    FunctionData(QVector<qint64>* v):
-        QwtSyntheticPointData( v->size() ),
-        values(v)
-    {
-    }
-
-    virtual double y( double x ) const
-    {
-        if( ((int)x) < values->size() && x >= 0.0) {
-            return (double) (*values)[(int)x];
-        } else {
-            return 0.0;
-        }
-    }
-
-private:
-    QVector<qint64>* values;
-};
 
 void Plot::insertCurve( const QString &title, 
     const QColor &color, const QPolygonF &points)
 {
     QwtPlotCurve *curve = new QwtPlotCurve();
     curve->setTitle( title );
-    curve->setPen( color, 2 ),
+    curve->setPen( color, 1.0),
     curve->setRenderHint( QwtPlotItem::RenderAntialiased, true );
 
     curve->setYAxis( QwtPlot::yLeft );

@@ -35,8 +35,6 @@ void MainWindow::on_actionOpen_triggered()
                 menuname = "Binlog";
             }
 
-            qDebug() << "Menu name:" << menuname;
-
             if(name_split.size() > 1) {
                     if(added_submenu.contains(menuname)) {
                             submenu = added_submenu[menuname];
