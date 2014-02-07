@@ -18,18 +18,12 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-void MainWindow::on_actionOpen_triggered()
-{
-    QString fileName = QFileDialog::getOpenFileName(this, tr("Open File"), "*-mysqladmin", tr("Files (*-mysqladmin)"));
-
-    ui->plot->LoadFile(fileName);
-
-    ui->menuGraphs->clear();
-
+void MainWindow::RefreshGraphsMenu(QStringList data) {
     QHash<QString,QMenu* > added_submenu;
     QMenu* submenu = NULL;
-    for(int i=1; i< ui->plot->all_names.size(); ++i) {
-            QStringList name_split = ui->plot->all_names[i].split('_');
+    for(int i=0; i< data.size(); ++i) {
+        //qDebug() << "adding menu:" << data[i];
+            QStringList name_split = data[i].split('_');
                             QString menuname = name_split.at(0);
             if(menuname == "binlog") {
                 menuname = "Binlog";
@@ -47,23 +41,40 @@ void MainWindow::on_actionOpen_triggered()
             }
 
             if(submenu == NULL) {
-                    ui->menuGraphs->addAction(ui->plot->all_names[i]);
+                    ui->menuGraphs->addAction(data[i]);
                     QAction* action = ui->menuGraphs->actions().at(ui->menuGraphs->actions().size()-1);
                     action->setCheckable(true);
-                    if(i==2 || i==3 || i==4 || i==63) {
-                        action->setChecked(true);
-                    }
+                    //    action->setChecked(true);
                     connect(action, SIGNAL(triggered(bool)), this, SLOT(on_GraphChecked(bool)) );
             } else {
-                submenu->addAction(ui->plot->all_names[i]);
+                submenu->addAction(data[i]);
                 QAction* action = submenu->actions().at(submenu->actions().size()-1);
                 action->setCheckable(true);
-                if(i==2 ) {
-                        action->setChecked(true);
-                }
+                //        action->setChecked(true);
                 connect(action, SIGNAL(triggered(bool)), this, SLOT(on_GraphChecked(bool)) );
             }
     }
+
+}
+
+void MainWindow::on_actionOpen_triggered()
+{
+    QString fileName = QFileDialog::getOpenFileName(this, tr("Open File"),
+                                                    "", tr("global status (*-mysqladmin);;vmstat (*-vmstat)"));
+
+    if(fileName.isNull() || fileName.isEmpty() ) {
+        return;
+    }
+
+    ui->plot->LoadFile(fileName);
+
+    ui->menuGraphs->clear();
+
+    QStringList newmenu_items;
+    for(int i=1; i< ui->plot->all_names.size(); ++i) {
+        newmenu_items.append(ui->plot->all_names[i]);
+    }
+    RefreshGraphsMenu(newmenu_items);
 }
 
 void MainWindow::on_GraphChecked(bool is_checked) {
@@ -85,4 +96,18 @@ void MainWindow::on_GraphChecked(bool is_checked) {
 void MainWindow::on_actionExit_triggered()
 {
     this->close();
+}
+
+void MainWindow::on_actionAdd_File_triggered()
+{
+
+    QStringList fileNames = QFileDialog::getOpenFileNames(this, tr("Add file to existing graph"), "", tr("global status (*-mysqladmin);;vmstat (*-vmstat)"));
+
+    for(int i=0; i<fileNames.size(); ++i) {
+            if(fileNames[i].isNull() || fileNames[i].isEmpty() ) {
+                    continue;
+            }
+
+            RefreshGraphsMenu(ui->plot->AddFile(fileNames[i]));
+    }
 }

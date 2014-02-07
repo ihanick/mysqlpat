@@ -10,6 +10,23 @@ class QPolygonF;
 class QwtPlotPanner;
 class QwtPlotMagnifier;
 
+
+#include <vector>
+#include <map>
+
+struct RawData {
+    std::vector<double> values; // if is_diff=1, contains val[i]-minval
+    std::vector<double> dt;
+    double minval;
+    double maxval; // if is_diff=1, abs_max_val - minval
+    double scaler; // getScaler(maxval);
+    bool is_diff;
+    double start_time;
+    double end_time;
+};
+
+
+
 class Plot: public QwtPlot
 {
     Q_OBJECT
@@ -17,8 +34,14 @@ class Plot: public QwtPlot
 public:
     Plot( QWidget * = NULL );
     void LoadFile(QString filename);
+    QStringList AddFile(QString filename);
     void DetachCurve(QString name);
     void AttachCurve(QString name);
+    void RefreshCurvePoints(QString name);
+
+    void DetachAllCurves();
+
+    void ReAttachCurve(QString name);
 
     double GetScaler(QString name) const;
     bool IsDiff(QString name) const;
@@ -27,7 +50,6 @@ public:
     QVector<QString> all_names;
     QVector<qint64> maxvalues;
     QVector<qint64> minvalues;
-    QVector<double> yscalers;
 
 private:
     void insertCurve(const QString &title,
@@ -36,7 +58,8 @@ private:
     QwtPlotMagnifier* magnifier;
 
     QQueue<QString> allowed_colors;
-    QMap<QString, bool> diff_status;
+
+    std::map<std::string, RawData> curvals;
 };
 
 #endif

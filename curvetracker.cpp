@@ -6,6 +6,8 @@
 
 #include "plot.h"
 
+#include <QDateTime>
+
 struct compareX
 {
     inline bool operator()( const double x, const QPointF &pos ) const
@@ -80,15 +82,11 @@ QwtText CurveTracker::trackerTextF( const QPointF &pos ) const
         }
     }
 
-    int hours = pos.x()/3600;
-    int minutes = (int)(pos.x()/60) % 60;
-    qreal seconds = pos.x() - hours*3600 - minutes*60;
+    QDateTime timestamp = QDateTime::fromMSecsSinceEpoch((qint64)(pos.x()*1000));
 
     info += "<br>";
-    info += QString("<font color=""white"">Time: %1:%2:%3</font>")
-            .arg(hours,2,10,QChar('0'))
-            .arg(minutes,2,10,QChar('0'))
-            .arg(QString().sprintf("%07.4f",seconds));
+    info += QString("<font color=""white"">Time: %1</font>")
+            .arg(timestamp.toString());
 
     trackerText.setText( info );
     trackerText.setRenderFlags(Qt::AlignLeft);
