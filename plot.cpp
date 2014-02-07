@@ -116,7 +116,7 @@ const double EPSILON = 1e-6;
 std::map<std::string, RawData> ConvertStrings2Doubles(
         const std::map<std::string, std::vector<std::string> > values, const std::vector<double> dt) {
     std::map<std::string, RawData> ret;
-    for (auto it = values.begin(); it != values.end(); ++it) {
+    for (std::map<std::string, std::vector<std::string> >::const_iterator it = values.begin(); it != values.end(); ++it) {
             auto arr = it->second;
             auto name = it->first;
 
@@ -262,7 +262,7 @@ read_vmstat_file(const char* filename) {
                         item_id++;
                 }
 
-                values["Uptime"].push_back(std::to_string(time_from_start));
+                values["Uptime"].push_back((QString("%1").arg(time_from_start)).toStdString());
                 time_from_start++;
         }
 
