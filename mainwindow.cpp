@@ -2,15 +2,22 @@
 #include "ui_mainwindow.h"
 #include <QFileDialog>
 #include <QDebug>
+#include "graphschoser.h"
+
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
-    ui(new Ui::MainWindow)
+    ui(new Ui::MainWindow),
+    chooser(new GraphsChooser)
 {
     ui->setupUi(this);
     ui->mainToolBar->hide();
     ui->statusBar->hide();
     setCentralWidget(ui->plot);
+
+
+    connect(chooser, &GraphsChooser::CurveDisabled, this, &MainWindow::on_CurveDisabled );
+    connect(chooser, &GraphsChooser::CurveEnabled, this, &MainWindow::on_CurveEnabled );
 }
 
 MainWindow::~MainWindow()
@@ -110,4 +117,18 @@ void MainWindow::on_actionAdd_File_triggered()
 
             RefreshGraphsMenu(ui->plot->AddFile(fileNames[i]));
     }
+}
+
+void MainWindow::on_actionChose_Curves_triggered()
+{
+    chooser->show();
+}
+
+
+void MainWindow::on_CurveEnabled(QString curve_name) {
+    ui->plot->AttachCurve(curve_name);
+}
+
+void MainWindow::on_CurveDisabled(QString curve_name) {
+    ui->plot->DetachCurve(curve_name);
 }

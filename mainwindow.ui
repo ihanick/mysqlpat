@@ -31,13 +31,15 @@
      <x>0</x>
      <y>0</y>
      <width>400</width>
-     <height>20</height>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFIle">
     <property name="title">
      <string>File</string>
     </property>
+    <addaction name="actionChose_Curves"/>
+    <addaction name="separator"/>
     <addaction name="actionOpen"/>
     <addaction name="actionAdd_File"/>
     <addaction name="actionExit"/>
@@ -87,6 +89,11 @@
   <action name="actionAdd_File">
    <property name="text">
     <string>Add File</string>
+   </property>
+  </action>
+  <action name="actionChose_Curves">
+   <property name="text">
+    <string>Chose Curves</string>
    </property>
   </action>
  </widget>

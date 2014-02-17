@@ -13,13 +13,16 @@ TEMPLATE = app
 SOURCES += main.cpp\
         mainwindow.cpp\
 	curvetracker.cpp\
-	plot.cpp
+	plot.cpp \
+    graphschoser.cpp
 
 HEADERS  += mainwindow.h\
 	curvetracker.h\
-	plot.h
+	plot.h \
+    graphschoser.h
 
-FORMS    += mainwindow.ui
+FORMS    += mainwindow.ui \
+    graphschoser.ui
 
 
 unix {
