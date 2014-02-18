@@ -27,6 +27,8 @@ private:
 protected:
     QTreeWidgetItem *AddChild(QTreeWidgetItem *parent, QString name, QString Description, QString curve_name);
     QTreeWidgetItem *AddRoot(QString name, QString description);
+    QTreeWidgetItem* AddSubGroup(QTreeWidgetItem *parent,QString name, QString Description);
+
 private slots:
     void on_treeWidget_itemChanged(QTreeWidgetItem *item, int column);
 };
