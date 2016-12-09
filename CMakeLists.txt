@@ -10,6 +10,9 @@ set(CMAKE_AUTORCC ON)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_CXX_STANDARD 11)
 
+set( VERSION_MAJOR "0" )
+set( VERSION_MINOR "0" )
+set( VERSION_PATCH "1" )
 
 # Find the QtWidgets library
 find_package(Qt5Widgets)
@@ -43,7 +46,48 @@ graphschoser.ui
 
 qt5_wrap_ui(UI_HEADERS ${UIS})
 
-add_executable(${PROJECT_NAME} ${SRC_LIST} ${UI_HEADERS})
+if(APPLE)
+	set(EXECUTABLE_TYPE MACOSX_BUNDLE)
+endif(APPLE)
+
+if(WIN32)
+	set(EXECUTABLE_TYPE WIN32)
+endif(WIN32)
+
+if(LINUX)
+	set(EXECUTABLE_TYPE "")
+endif(LINUX)
+
+
+add_executable(${PROJECT_NAME} ${EXECUTABLE_TYPE} ${SRC_LIST} ${UI_HEADERS})
+
+
+
+if( APPLE )
+	# Define some settings for the Bundle
+	set( MACOSX_BUNDLE_BUNDLE_NAME ${PROJECT_NAME} )
+	set( MACOSX_BUNDLE_GUI_IDENTIFIER "${PROJECT_NAME}" )
+	set( MACOSX_BUNDLE_ICON_FILE ${PROJECT_NAME}.icns )
+	set( MACOSX_BUNDLE_INFO_STRING "\"${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH}\", Copyright 2014 ${PROJECT_NAME} team" )
+	set( MACOSX_BUNDLE_SHORT_VERSION_STRING "${VERSION_MAJOR}.${VERSION_MINOR}" )
+	set( MACOSX_BUNDLE_LONG_VERSION_STRING "${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH}" )
+	set( MACOSX_BUNDLE_BUNDLE_VERSION "${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH}" )
+	set( MACOSX_BUNDLE_COPYRIGHT "(C) 2014-2016 Nickolay Ihalainen" )
+	set(CMAKE_OSX_DEPLOYMENT_TARGET "10.10")
+
+	add_custom_target( osx_bundle_dirs
+		COMMAND mkdir -p ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}.app/Contents/Resources
+		COMMAND mkdir -p ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}.app/Contents/MacOS
+		COMMAND cp ${CMAKE_CURRENT_SOURCE_DIR}/${MACOSX_BUNDLE_ICON_FILE}
+		${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}.app/Contents/Resources/${MACOSX_BUNDLE_ICON_FILE}
+		# Qt translations - uncomment this line when you need to install them to the bundle
+		#COMMAND cp *.qm ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}.app/Contents/Resources/
+		)
+	add_dependencies( ${PROJECT_NAME} osx_bundle_dirs )
+	# This tells cmake where to place files inside the bundle
+	set_source_files_properties( ${${PROJECT_NAME}_RESOURCES} ${${PROJECT_NAME}_TRANSLATIONS}
+		PROPERTIES MACOSX_PACKAGE_LOCATION Resources )
+endif( APPLE )
 
 
 

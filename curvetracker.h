@@ -1,5 +1,4 @@
-#ifndef _CURVE_TRACKER_
-#define _CURVE_TRACKER_H_
+#pragma once
 
 #include <qwt_plot_picker.h>
 
@@ -19,4 +18,3 @@ private:
     QLineF curveLineAt( const QwtPlotCurve *, double x ) const;
 };
 
-#endif

@@ -53,6 +53,19 @@ git submodule update --init --recursive
 mkdir bld
 cd bld
 cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo -DBUILTIN_QWT=ON ../
+make -j4
+```
+
+OS X build:
+```bash
+brew install cmake qt5
+git clone https://github.com/ihanick/mysqlpat.git
+cd mysqlpat
+git submodule update --init --recursive
+mkdir bld
+cd bld
+CMAKE_PREFIX_PATH=`ls -d /usr/local/Cellar/qt5/*|tail -n 1` cmake -DBUILTIN_QWT=ON -DCMAKE_BUILD_TYPE=RelWithDebInfo ..
+make -j4
 ```
 
 Alternative way, use system qwt:
@@ -66,5 +79,6 @@ mkdir bld
 cd bld
 cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo ../
 ```
+
 
 You can also install full qt development suite from https://www.qt.io/ and compile cmake project from QtCreator: http://doc.qt.io/qtcreator/creator-project-cmake.html
