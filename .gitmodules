@@ -1,0 +1,3 @@
+[submodule "qwt"]
+	path = qwt
+	url = git@github.com:osakared/qwt.git
