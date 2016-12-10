@@ -80,6 +80,23 @@ CMAKE_PREFIX_PATH=`ls -d /usr/local/Cellar/qt5/*|tail -n 1` cmake -DBUILTIN_QWT=
 make -j4
 ```
 
+Windows build:
+- install cmake from http://cmake.org/ (add it to path to simplify things during install)
+- install git from https://git-scm.com/download/win
+In git shell open some directory and fetch sources:
+```bash
+git clone https://github.com/ihanick/mysqlpat.git
+cd mysqlpat
+git submodule update --init --recursive
+
+```
+- Download and install Community OpenSource version of Qt for gpl aplications: https://www.qt.io/download-open-source/
+(windows xp requires QT_OPENGL=software environment variable to be configured). You need only a single version of qt, 5.7 + mingw32 works fine (tested on Windows 10 and windows xp)
+- Launch Qt creator and open CMakeLists.txt project file
+- If needed specify path to cmake with Tools -> Options -> Build & Run -> CMake
+- Press Run
+
+
 Alternative way, use system qwt:
 ```bash
 # install Qt 5 development tools:
