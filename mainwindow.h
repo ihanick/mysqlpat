@@ -24,6 +24,7 @@ private slots:
     void on_actionOpen_triggered();
 
     void on_GraphChecked(bool is_checked);
+    void on_GraphGroup(bool is_checked);
 
     void on_actionExit_triggered();
 
@@ -40,6 +41,7 @@ private:
     GraphsChooser *chooser;
     QHash<QString,QMenu* > added_submenu;
     QHash<QString,QAction* > added_menus;
+    QHash<QString,QStringList > added_menu_groups;
 
     void RefreshGraphsMenu(QStringList data);
 };

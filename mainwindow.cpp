@@ -46,6 +46,12 @@ void MainWindow::RefreshGraphsMenu(QStringList data) {
                     } else {
                             submenu = ui->menuGraphs->addMenu(menuname);
                             added_submenu[menuname] = submenu;
+                            QString AllName = QString("All: %0").arg(menuname);
+                            submenu->addAction(AllName);
+                            QAction* action = submenu->actions().at(submenu->actions().size()-1);
+                            action->setCheckable(true);
+                            connect(action, SIGNAL(triggered(bool)), this, SLOT(on_GraphGroup(bool)) );
+                            added_menus[AllName] = action;
                     }
             } else {
                 submenu = NULL;
@@ -55,16 +61,16 @@ void MainWindow::RefreshGraphsMenu(QStringList data) {
                     ui->menuGraphs->addAction(data[i]);
                     QAction* action = ui->menuGraphs->actions().at(ui->menuGraphs->actions().size()-1);
                     action->setCheckable(true);
-                    //    action->setChecked(true);
                     connect(action, SIGNAL(triggered(bool)), this, SLOT(on_GraphChecked(bool)) );
                     added_menus[data[i]] = action;
             } else {
                 submenu->addAction(data[i]);
                 QAction* action = submenu->actions().at(submenu->actions().size()-1);
                 action->setCheckable(true);
-                //        action->setChecked(true);
                 connect(action, SIGNAL(triggered(bool)), this, SLOT(on_GraphChecked(bool)) );
                 added_menus[data[i]] = action;
+                QString AllName = QString("All: %0").arg(menuname);
+                added_menu_groups[AllName].append(data[i]);
             }
     }
 
@@ -106,6 +112,18 @@ void MainWindow::open_pat_file(QString fileName) {
 }
 
 
+void MainWindow::on_GraphGroup(bool is_checked) {
+     QAction* action = qobject_cast<QAction*>(sender());
+    if(action)
+    {
+        QString graph_name = action->text();
+        qDebug() << "Got graph group action: " << graph_name << "state" << is_checked << added_menu_groups[graph_name];
+        foreach(const QString& curve_name,  added_menu_groups[graph_name]) {
+            toggle_curve_menu(curve_name, is_checked);
+        }
+    }
+}
+
 void MainWindow::on_GraphChecked(bool is_checked) {
     QAction* action = qobject_cast<QAction*>(sender());
     if(action)
@@ -119,7 +137,6 @@ void MainWindow::on_GraphChecked(bool is_checked) {
                 ui->plot->AttachCurve(graph_name);
             }
     }
-
 }
 
 void MainWindow::on_actionExit_triggered()
