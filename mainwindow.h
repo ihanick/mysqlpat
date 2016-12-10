@@ -14,8 +14,11 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 
 public:
-    explicit MainWindow(QWidget *parent = 0);
+    explicit MainWindow(QStringList arguments, QWidget *parent = 0);
     ~MainWindow();
+
+    void open_pat_file(QString filename);
+    void toggle_curve_menu(QString curve_name, bool flag_state);
 
 private slots:
     void on_actionOpen_triggered();
@@ -35,6 +38,8 @@ private slots:
 private:
     Ui::MainWindow *ui;
     GraphsChooser *chooser;
+    QHash<QString,QMenu* > added_submenu;
+    QHash<QString,QAction* > added_menus;
 
     void RefreshGraphsMenu(QStringList data);
 };

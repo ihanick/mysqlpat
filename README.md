@@ -20,9 +20,17 @@ How it works?
 Simple usage
 ----
 - collect pt-stalk report: https://www.percona.com/blog/2013/01/03/percona-toolkit-by-example-pt-stalk/
-- Menu: File -> Open, choose "date"-mysqladmin file or vmstat file.
+- Menu: File -> Open, choose "date"-mysqladmin file or "date"-vmstat file.
+
+You can also enable groups:
 - Enable any graph group: File -> Choose Curves, select any group.
-- If needed add more files: File -> Add File it could be same or different date.
+Or add additional files:
+- File -> Add File it could be same or different date.
+
+Or provide file as a command line argument
+```bash
+./mysqlpat 2016_10_27_16_13_13-mysqladmin
+```
 
 
 
@@ -30,7 +38,9 @@ Advanced usage
 ----
 You can aggregate many mysqladmin ext samples with:
 
-```grep -m 1 Uptime *mysqladmin|awk '{print $4, $1}'|sort -n|awk '{print $2}'|perl -pe 's/:\|//g'|xargs cat | cat > ~/test-mysqladmin```
+```bash
+grep -m 1 Uptime *mysqladmin|awk '{print $4, $1}'|sort -n|awk '{print $2}'|perl -pe 's/:\|//g'|xargs cat | cat > ~/test-mysqladmin
+```
 
 
 Or create 10 minutes graph without pt-stalk:

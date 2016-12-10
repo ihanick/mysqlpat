@@ -5,7 +5,7 @@
 #include "graphschoser.h"
 
 
-MainWindow::MainWindow(QWidget *parent) :
+MainWindow::MainWindow(QStringList arguments, QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow),
     chooser(new GraphsChooser)
@@ -18,6 +18,11 @@ MainWindow::MainWindow(QWidget *parent) :
 
     connect(chooser, &GraphsChooser::CurveDisabled, this, &MainWindow::on_CurveDisabled );
     connect(chooser, &GraphsChooser::CurveEnabled, this, &MainWindow::on_CurveEnabled );
+
+    qDebug() << arguments;
+    if (arguments.size() > 1) {
+        open_pat_file(arguments[1]);
+    }
 }
 
 MainWindow::~MainWindow()
@@ -26,7 +31,6 @@ MainWindow::~MainWindow()
 }
 
 void MainWindow::RefreshGraphsMenu(QStringList data) {
-    QHash<QString,QMenu* > added_submenu;
     QMenu* submenu = NULL;
     for(int i=0; i< data.size(); ++i) {
         //qDebug() << "adding menu:" << data[i];
@@ -53,12 +57,14 @@ void MainWindow::RefreshGraphsMenu(QStringList data) {
                     action->setCheckable(true);
                     //    action->setChecked(true);
                     connect(action, SIGNAL(triggered(bool)), this, SLOT(on_GraphChecked(bool)) );
+                    added_menus[data[i]] = action;
             } else {
                 submenu->addAction(data[i]);
                 QAction* action = submenu->actions().at(submenu->actions().size()-1);
                 action->setCheckable(true);
                 //        action->setChecked(true);
                 connect(action, SIGNAL(triggered(bool)), this, SLOT(on_GraphChecked(bool)) );
+                added_menus[data[i]] = action;
             }
     }
 
@@ -68,7 +74,18 @@ void MainWindow::on_actionOpen_triggered()
 {
     QString fileName = QFileDialog::getOpenFileName(this, tr("Open File"),
                                                     "", tr("global status (*-mysqladmin);;vmstat (*-vmstat)"));
+    open_pat_file(fileName);
+}
 
+void MainWindow::toggle_curve_menu(QString curve_name, bool flag_state) {
+    if (added_menus.contains(curve_name)) {
+        added_menus[curve_name]->setChecked(flag_state);
+        added_menus[curve_name]->triggered(flag_state);
+    }
+}
+
+
+void MainWindow::open_pat_file(QString fileName) {
     if(fileName.isNull() || fileName.isEmpty() ) {
         return;
     }
@@ -82,7 +99,12 @@ void MainWindow::on_actionOpen_triggered()
         newmenu_items.append(ui->plot->all_names[i]);
     }
     RefreshGraphsMenu(newmenu_items);
+
+    // Enable any non-zero graph to avoid black screen
+    toggle_curve_menu("Queries", true);
+    toggle_curve_menu("vmstat_r", true);
 }
+
 
 void MainWindow::on_GraphChecked(bool is_checked) {
     QAction* action = qobject_cast<QAction*>(sender());
@@ -126,9 +148,11 @@ void MainWindow::on_actionChose_Curves_triggered()
 
 
 void MainWindow::on_CurveEnabled(QString curve_name) {
-    ui->plot->AttachCurve(curve_name);
+    toggle_curve_menu(curve_name, true);
+    //ui->plot->AttachCurve(curve_name);
 }
 
 void MainWindow::on_CurveDisabled(QString curve_name) {
-    ui->plot->DetachCurve(curve_name);
+    toggle_curve_menu(curve_name, false);
+    //ui->plot->DetachCurve(curve_name);
 }
