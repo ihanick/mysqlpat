@@ -89,6 +89,20 @@ if( APPLE )
 		PROPERTIES MACOSX_PACKAGE_LOCATION Resources )
 endif( APPLE )
 
+if (WIN32)
+	get_target_property(QT5_QMAKE_EXECUTABLE Qt5::qmake IMPORTED_LOCATION)
+	get_filename_component(QT5_WINDEPLOYQT_EXECUTABLE ${QT5_QMAKE_EXECUTABLE} PATH)
+	set(QT5_WINDEPLOYQT_EXECUTABLE "${QT5_WINDEPLOYQT_EXECUTABLE}/windeployqt.exe")
+
+        set(DEPLOY_TYPE --release)
+        if (CMAKE_BUILD_TYPE STREQUAL "Debug")
+            set(DEPLOY_TYPE --debug)
+        endif(CMAKE_BUILD_TYPE STREQUAL "Debug")
+
+	add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+                COMMAND ${QT5_WINDEPLOYQT_EXECUTABLE} ${DEPLOY_TYPE} --qmldir ${CMAKE_SOURCE_DIR} $<TARGET_FILE_DIR:mysqlpat>)
+endif(WIN32)
+
 
 
 # Use the Widgets module from Qt 5.
