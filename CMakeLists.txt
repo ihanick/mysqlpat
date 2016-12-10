@@ -1,5 +1,5 @@
 project(mysqlpat)
-cmake_minimum_required(VERSION 3.0.2)
+cmake_minimum_required(VERSION 2.8.0)
 aux_source_directory(. SRC_LIST)
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/modules/")
@@ -24,7 +24,7 @@ endif(NOT BUILTIN_QWT)
 
 if (NOT QWT_FOUND)
     message(WARNING "Failed find system Qwt Library - using built-in Qwt")
-    set(QWT_SRC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/qwt/qwt/src)
+    set(QWT_SRC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/qwt/src)
     if (NOT EXISTS ${QWT_SRC_DIR})
         message(FATAL_ERROR "Qwt submodule not configured (git submodule update --init --recursive)")
     endif ()

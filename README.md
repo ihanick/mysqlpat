@@ -56,13 +56,15 @@ This program uses Qt5 and Qwt.
 In order to use built-in Qwt:
 ```bash
 # install Qt 5 development tools:
-apt-get install qt5-default
+apt-get install cmake g++ qt5-default libqt5svg5-dev libqt5opengl5-dev
 git clone https://github.com/ihanick/mysqlpat.git
 cd mysqlpat
 git submodule update --init --recursive
 mkdir bld
 cd bld
 cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo -DBUILTIN_QWT=ON ../
+# ubuntu 14.04 or other hosts with cmake < 3.1 require 
+cmake -DCMAKE_CXX_FLAGS="-std=c++11" -DCMAKE_BUILD_TYPE=RelWithDebInfo -DBUILTIN_QWT=ON ../
 make -j4
 ```
 

@@ -1,3 +1,5 @@
 [submodule "qwt"]
 	path = qwt
 	url = https://github.com/osakared/qwt.git
+[qwt "qwt"]
+	branch = qwt-6.1
