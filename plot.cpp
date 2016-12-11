@@ -226,6 +226,66 @@ read_mysqladmin_file(const char* filename) {
 }
 
 std::map<std::string, std::vector<std::string> >
+read_netstat_s_file(const char* filename) {
+        std::map<std::string, std::vector<std::string> > values;
+    std::string line;
+    std::ifstream myfile(filename);
+    if (!myfile.is_open()) {
+        return values;
+    }
+
+    std::string val_name;
+    std::string group_name;
+    double start_ts = 0.0;
+
+
+    while ( getline (myfile,line) )
+    {
+        std::stringstream myStream(line);
+        std::string str;
+
+        if (line.size() > 3 && line.find("TS") == 0) {
+            myStream >> str;
+            double ts = 0.0;
+            myStream >> ts;
+            if (start_ts < 0.1)
+                start_ts = ts;
+            values["Uptime"].push_back((QString("%1").arg(ts - start_ts)).toStdString());
+            group_name = "";
+            continue;
+        }
+        if(line[line.length()-1] == ':') {
+            myStream >> str;
+            group_name = str.substr(0, str.length()-1);
+            continue;
+        }
+        auto pos = line.find_first_of("0123456789");
+        if(pos != std::string::npos) {
+            myStream.seekg(static_cast<long>(pos));
+            uint64_t val = 0;
+            myStream >> val;
+
+            std::string name;
+            for(const char& c: line) {
+                if ( ('0' <= c && c <= '9') || c == ':')
+                    continue;
+                if (c == ' ') {
+                    if (name.length() > 0 && name[name.length()-1] != '_')
+                        name.push_back('_');
+                } else {
+                    name.push_back(c);
+                }
+            }
+            values[std::string("netstats:") + group_name + std::string("_") + name].push_back(QString("%1").arg(val).toStdString());
+        }
+    }
+
+    myfile.close();
+    return values;
+}
+
+
+std::map<std::string, std::vector<std::string> >
 read_vmstat_file(const char* filename) {
         std::map<std::string, std::vector<std::string> > values;
         std::string line;
@@ -338,6 +398,8 @@ QStringList Plot::AddFile(QString filename) {
 
     if( filename_parts.at(filename_parts.size()-1) == "mysqladmin" ) {
             str_values = read_mysqladmin_file(filename.toLocal8Bit().constData());
+    } else if( filename_parts.at(filename_parts.size()-1) == "netstat_s" ) {
+            str_values = read_netstat_s_file(filename.toLocal8Bit().constData());
     } else if(filename_parts.at(filename_parts.size()-1) == "vmstat" ) {
             str_values = read_vmstat_file(filename.toLocal8Bit().constData());
     } else {

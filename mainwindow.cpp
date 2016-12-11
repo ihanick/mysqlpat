@@ -78,8 +78,10 @@ void MainWindow::RefreshGraphsMenu(QStringList data) {
 
 void MainWindow::on_actionOpen_triggered()
 {
-    QString fileName = QFileDialog::getOpenFileName(this, tr("Open File"),
-                                                    "", tr("global status (*-mysqladmin);;vmstat (*-vmstat)"));
+    QString fileName = QFileDialog::getOpenFileName(
+                this, tr("Open File"), "",
+                tr("global status (*-mysqladmin);;vmstat (*-vmstat);;netstat extended (*-netstat_s)")
+                );
     open_pat_file(fileName);
 }
 
@@ -109,6 +111,7 @@ void MainWindow::open_pat_file(QString fileName) {
     // Enable any non-zero graph to avoid black screen
     toggle_curve_menu("Queries", true);
     toggle_curve_menu("vmstat_r", true);
+    toggle_curve_menu("netstats:IpExt_OutOctets_", true);
 }
 
 
@@ -147,7 +150,7 @@ void MainWindow::on_actionExit_triggered()
 void MainWindow::on_actionAdd_File_triggered()
 {
 
-    QStringList fileNames = QFileDialog::getOpenFileNames(this, tr("Add file to existing graph"), "", tr("global status (*-mysqladmin);;vmstat (*-vmstat)"));
+    QStringList fileNames = QFileDialog::getOpenFileNames(this, tr("Add file to existing graph"), "", tr("global status (*-mysqladmin);;vmstat (*-vmstat);;Netstat Extended (*-netstat_s)"));
 
     for(int i=0; i<fileNames.size(); ++i) {
             if(fileNames[i].isNull() || fileNames[i].isEmpty() ) {
