@@ -20,7 +20,7 @@ How it works?
 Simple usage
 ----
 - collect pt-stalk report: https://www.percona.com/blog/2013/01/03/percona-toolkit-by-example-pt-stalk/
-- Menu: File -> Open, choose "date"-mysqladmin file or "date"-vmstat or "date"-netstat_s file.
+- Menu: File -> Open, choose "date"-mysqladmin file or "date"-vmstat or "date"-netstat_s or "date"-iostat file.
 
 You can also enable groups:
 - Enable any graph group: File -> Choose Curves, select any group.

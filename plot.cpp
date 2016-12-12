@@ -284,6 +284,62 @@ read_netstat_s_file(const char* filename) {
     return values;
 }
 
+std::map<std::string, std::vector<std::string> >
+read_iostat_file(const char* filename) {
+    std::map<std::string, std::vector<std::string> > values;
+    std::string line;
+    std::ifstream myfile(filename);
+    if (!myfile.is_open()) {
+        return values;
+    }
+
+    std::vector<std::string> names;
+    int time_from_start = 0;
+    while ( getline (myfile,line) )
+    {
+        if(line[0]=='D' && line[1]=='e' && names.size() > 0 ) {
+            values["Uptime"].push_back((QString("%1").arg(time_from_start)).toStdString());
+            time_from_start++;
+            continue;
+        }
+        if(line[0] == 'L' || line.size() < 5) {
+            continue;
+        }
+        std::stringstream myStream(line);
+        std::string str;
+
+        int item_id = 0;
+
+        std::string device_name;
+        while(myStream >> str) {
+
+            if(line[0]=='D' && line[1]=='e') {
+                names.push_back(str);
+                if (item_id == 0) {
+                    values["Uptime"].push_back((QString("%1").arg(time_from_start)).toStdString());
+                    time_from_start++;
+                }
+            } else if(names.size() > 0) {
+                if (item_id == 0) {
+                    device_name = str;
+                } else {
+                    std::string key = std::string("iostat:") + device_name + std::string("_") + names[item_id];
+                    values[key].push_back(str);
+                    if(values[key].size() == 2) {
+                        values[key][0] = str;
+                    }
+                }
+            }
+            item_id++;
+        }
+
+    }
+
+    myfile.close();
+    return values;
+}
+
+
 
 std::map<std::string, std::vector<std::string> >
 read_vmstat_file(const char* filename) {
@@ -400,6 +456,8 @@ QStringList Plot::AddFile(QString filename) {
             str_values = read_mysqladmin_file(filename.toLocal8Bit().constData());
     } else if( filename_parts.at(filename_parts.size()-1) == "netstat_s" ) {
             str_values = read_netstat_s_file(filename.toLocal8Bit().constData());
+    } else if( filename_parts.at(filename_parts.size()-1) == "iostat" ) {
+            str_values = read_iostat_file(filename.toLocal8Bit().constData());
     } else if(filename_parts.at(filename_parts.size()-1) == "vmstat" ) {
             str_values = read_vmstat_file(filename.toLocal8Bit().constData());
     } else {

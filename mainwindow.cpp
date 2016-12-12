@@ -80,7 +80,7 @@ void MainWindow::on_actionOpen_triggered()
 {
     QString fileName = QFileDialog::getOpenFileName(
                 this, tr("Open File"), "",
-                tr("global status (*-mysqladmin);;vmstat (*-vmstat);;netstat extended (*-netstat_s)")
+                tr("global status (*-mysqladmin);;vmstat (*-vmstat);;Netstat Extended (*-netstat_s);;IOstat (*-iostat)")
                 );
     open_pat_file(fileName);
 }
@@ -150,7 +150,10 @@ void MainWindow::on_actionExit_triggered()
 void MainWindow::on_actionAdd_File_triggered()
 {
 
-    QStringList fileNames = QFileDialog::getOpenFileNames(this, tr("Add file to existing graph"), "", tr("global status (*-mysqladmin);;vmstat (*-vmstat);;Netstat Extended (*-netstat_s)"));
+    QStringList fileNames = QFileDialog::getOpenFileNames(
+                this, tr("Add file to existing graph"), "",
+                tr("global status (*-mysqladmin);;vmstat (*-vmstat);;Netstat Extended (*-netstat_s);;IOstat (*-iostat)")
+                );
 
     for(int i=0; i<fileNames.size(); ++i) {
             if(fileNames[i].isNull() || fileNames[i].isEmpty() ) {
