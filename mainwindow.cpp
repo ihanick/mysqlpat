@@ -20,8 +20,11 @@ MainWindow::MainWindow(QStringList arguments, QWidget *parent) :
     connect(chooser, &GraphsChooser::CurveEnabled, this, &MainWindow::on_CurveEnabled );
 
     qDebug() << arguments;
-    if (arguments.size() > 1) {
+    if (arguments.size() >= 2) {
         open_pat_file(arguments[1]);
+    }
+    for(int i = 2; i < arguments.size(); ++i) {
+        RefreshGraphsMenu(ui->plot->AddFile(arguments[i]));
     }
 }
 
